@@ -2,8 +2,8 @@
 /*
 -> Authentication System to verify if the user is allowed to access services
 
--> If success: go to /home/
--> If failed: go to /error.html
+-> If success: go to home/
+-> If failed: go to error.html
 */
 
 
