@@ -1,4 +1,9 @@
 <?php
+// No information provided
+if (!isset($uid) || !isset($passcode)) {
+  header("Location: error.html");
+}
+
 $uid = $_GET["uid"];
 $passcode = $_GET["pc"];
 
@@ -15,9 +20,12 @@ if ($conn->connect_error) {
 
 $result = $conn->query("SELECT COUNT(*) FROM `notebooks` WHERE `uid`=$uid AND `passcode`='$passcode'");
 if ($result->fetch_assoc()["COUNT(*)"] == "1") {
+  session_start();
+  $_SESSION["uid"] = $uid;
+  header("Location: home");
   echo "Login successfully";
 } else {
-  echo "Please scan your QR Code again";
+  header("Location: error.html");
 }
 
 ?>
