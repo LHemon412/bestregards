@@ -12,6 +12,7 @@ body {
 
 /* Heading */
 .heading {
+  height: 8vh;
   width: 100%;
   background-color: #b0d0ff;
 }
@@ -60,7 +61,7 @@ li.active a {
   text-decoration: none;
   color: #000;
   background-color: #dddddd;
-  font-size: 24px;
+  font-size: 4vh;
   font-weight: bold;
 }
 
