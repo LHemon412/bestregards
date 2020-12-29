@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh_hk" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title></title>
+    <script src="../jquery.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      $(".navigation_bar a").on({
+        mouseenter: function() {
+          $(this).css("background-color", "#a5b6c4");
+        },
+        mouseleave: function() {
+          if ($(this).parent().attr("class") == "active") {
+            $(this).css("background-color", "white");
+          } else {
+            $(this).css("background-color", "#dddddd");
+          }
+        }
+      });
+
+      $.get("randquote.php", function(data) {
+        $("#quote").text(data);
+      })
+    });
+
+    </script>
+  </head>
+  <body>
+    <div class="heading">
+      <!-- TODO replace with logo (picture) -->
+      <h1>Best Regards.</h1>
+    </div>
+    <div class="navigation_bar">
+      <ul>
+        <li class="active"><a href="../home">主頁</a></li>
+        <li><a href="../notes-sharing">筆記分享</a></li>
+      </ul>
+    </div>
+    <div class="quote_container">
+      <h1 id="quote"></h1>
+    </div>
+  </body>
+</html>
