@@ -12,6 +12,12 @@ if (!isset($uid) || !isset($passcode)) {
   header("Location: error.html");
 }
 
+// Check if user already logged in
+session_start();
+if (isset($_SESSION["uid"])) {
+  header("Location: home");
+}
+
 // Initialization
 $uid = $_GET["uid"];
 $passcode = $_GET["pc"];
@@ -30,7 +36,6 @@ if ($conn->connect_error) {
 // Requesting data and verify
 $result = $conn->query("SELECT COUNT(*) FROM `notebooks` WHERE `uid`=$uid AND `passcode`='$passcode'");
 if ($result->fetch_assoc()["COUNT(*)"] == "1") {
-  session_start();
   $_SESSION["uid"] = $uid;
   header("Location: home");
 } else {
