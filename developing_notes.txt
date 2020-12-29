@@ -1,0 +1,5 @@
+https://bestregards.com/?uid=xxx&pc=xxxxxxxx
+=== http://localhost/bestregards/?uid=1&pc=X43305YI
+
+Auth success -> home/
+Auth failed -> error.html
