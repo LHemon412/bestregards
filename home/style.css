@@ -12,7 +12,7 @@ body {
 
 /* Heading */
 .heading {
-  height: 8vh;
+  height: 6vh;
   width: 100%;
   background-color: #b0d0ff;
 }
@@ -23,6 +23,7 @@ body {
   margin: 0;
   font-family: Cooper Black;
   font-weight: bold;
+  font-size: 3vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,7 +62,7 @@ li.active a {
   text-decoration: none;
   color: #000;
   background-color: #dddddd;
-  font-size: 4vh;
+  font-size: 3vh;
   font-weight: bold;
 }
 
@@ -82,10 +83,13 @@ li.active a {
 
 h1#quote {
   height: 100%;
-  width: 100%;
+  width: 90%;
   margin: 0;
+  padding-left: 5%;
+  padding-right: 5%;
   font-family: Centaur;
   font-weight: bold;
+  font-size: 180%;
   display: flex;
   justify-content: center;
   align-items: center;
