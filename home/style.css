@@ -11,7 +11,7 @@ body {
 
 /* Heading */
 .heading {
-  height: 6vh;
+  height: 8vmin;
   width: 100%;
   background-color: #b0d0ff;
 }
@@ -22,7 +22,7 @@ body {
   margin: 0;
   font-family: Cooper Black;
   font-weight: bold;
-  font-size: 3vh;
+  font-size: 5.8vmin;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,7 +38,7 @@ body {
   padding: 0;
   overflow: hidden;
   width: 100%;
-  height: 10vh;
+  height: 8vmin;
   background-color: #b1b7bd;
 }
 
@@ -61,7 +61,7 @@ li.active a {
   text-decoration: none;
   color: #000;
   background-color: #dddddd;
-  font-size: 3vh;
+  font-size: 3.5vmin;
   font-weight: bold;
 }
 
