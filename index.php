@@ -34,7 +34,10 @@ if ($conn->connect_error) {
 }
 
 // Requesting data and verify
-$result = $conn->query("SELECT COUNT(*) FROM `notebooks` WHERE `uid`=$uid AND `passcode`='$passcode'");
+$stmt = $conn->prepare("SELECT COUNT(*) FROM `notebooks` WHERE `uid`=? AND `passcode`=?");
+$stmt->bind_param("ss", $uid, $passcode);
+$stmt->execute();
+$result = $stmt->get_result();
 if ($result->fetch_assoc()["COUNT(*)"] == "1") {
   $_SESSION["uid"] = $uid;
   header("Location: home");
