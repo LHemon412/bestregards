@@ -8,9 +8,18 @@
 
 // Verify if user is logged in
 session_start();
-if (!isset($_SESSION["uid"])) {
-  header("Location: ../error.html");
+
+if (isset($_SESSION["uid"])) {
+  require("page.html");
+  die();
 }
 
-require("page.html");
+include "../auth.php";
+if (isCookieLoggedIn()) {
+  $_SESSION["uid"] = $_COOKIE["uid"];
+  require("page.html");
+  die();
+}
+
+header("Location: ../error.html");
 ?>
