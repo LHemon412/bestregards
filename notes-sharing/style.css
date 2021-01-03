@@ -69,9 +69,9 @@ li.active a {
 
 /* Posts */
 div.posts {
-  width: 90%;
-  margin-left: 5%;
-  margin-right: 5%;
+  width: 90vw;
+  margin-left: 5vw;
+  margin-right: 5vw;
   display: flex;
   flex-direction: column;
 }
@@ -167,13 +167,22 @@ div.atmt_img_container {
   background-color: #dddddd;
 }
 
-.atmt_img_preview img {
-  padding: 1vmin;
-  border-radius: 2.5vmin;
+div.atmt_img_preview {
+  position: relative;
 }
 
-.atmt_img_more {
+div.atmt_img_preview img {
+  padding: 1vmin;
+  border-radius: 2.5vmin;
+  cursor: pointer;
+}
+
+span.atmt_img_more {
   position: absolute;
+  bottom: 3%;
+  right: 4%;
+  cursor: pointer;
+  user-select: none;
   text-align: right;
 }
 
