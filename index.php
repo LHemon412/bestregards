@@ -9,10 +9,10 @@
 include "auth.php";
 
 // Initialization
-/*$servername = "localhost";
+$servername = "localhost";
 $username = "root";
 $password = "";
-$database = "bestregards";*/
+$database = "bestregards";
 
 // Check if user already logged in
 session_start();
