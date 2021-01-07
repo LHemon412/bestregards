@@ -3,11 +3,17 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../jquery-ui/jquery-ui.min.css">
     <title>筆記分享 - Best Regards.</title>
     <script src="../jquery.js"></script>
+    <script src="../jquery-ui/jquery-ui.min.js"></script>
     <script src="loadPosts.js"></script>
     <script type="text/javascript">
+      const IMAGE_EXT = ["jpg", "jpeg", "png"];
+      const ALLOWED_EXT = ["pdf", "docx", "doc"];
       $(function() {
+        $(".modal-warning").hide();
+
         $(".navigation_bar a").on({
           mouseenter: function() {
             $(this).css("background-color", "#a5b6c4");
@@ -21,52 +27,353 @@
           }
         });
 
-        $(window).resize(function() {
-          let img = new Image();
-          img.onload = function() {
-            let vmin = ($(window).height() > $(window).width()) ? $(window).width() * 0.01 : $(window).height() * 0.01;
-            let width = this.width;
-            let height = this.height;
-            let hwratio = height / width;
-            if (height > ($(window).height() * 0.6)) {
-              height = $(window).height() * 0.6;
-              width = height / hwratio;
-              let compress_ratio = (height / this.height);
-              if ((width * compress_ratio) > ($(window).width() * 0.44)) {
-                width = $(window).width() * 0.44;
-              }
-            } else if (width > ($(window).width() * 0.44)){
-              width = $(window).width() * 0.44;
-              height = width * hwratio;
-            }
-            $("div.atmt_img_preview img").width(width);
-            $("div.atmt_img_preview img").height(height);
-            $("div.atmt_img_container").width(width+2*vmin);
-            $("div.atmt_img_container").height(height+2*vmin);
-            $("div.atmt_others_container").width($(window).width()*0.88 - width - 4*vmin);
-          }
-          console.log($("div.atmt_img_preview img").attr("src"));
-          img.src = $("div.atmt_img_preview img").attr("src");
-        });
-
         $(".modal-close").click(function() {
-          $(".modal").css("display", "none");
+          $(".modal, .modal>div").css("display", "none");
+          $("body").css("overflow", "auto");
         });
 
         $(".modal").click(function(event) {
           if (event.target.className == "modal") {
-            $(".modal").css("display", "none");
+            $(".modal, .modal>div").css("display", "none");
+            $("body").css("overflow", "auto");
           }
+        })
+
+        $(".new-post textarea").click(function(e) {
+          $(".modal").toggle("fade", 300);
+          $(".modal-new-post").toggle("slide", {direction: "down"}, 300);
+        })
+
+        $("td#new-post-form-atmts").click(function() {
+          $("input#npf-atmts").trigger("click");
+        });
+
+        // Check for advance upload 'dragndrop'
+        var isAdvancedUpload = function() {
+          var div = document.createElement('div');
+          return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+        }();
+
+        function updateFileDisplay() {
+          if (droppedFiles.length() == 0) {
+            return;
+          } else if (droppedFiles.length() > 1) {
+            $(`label[for="npf-atmts"]`).text($(`.modal-new-post input[type="file"]`).attr("data-multiple-caption").replace("{count}", droppedFiles.length()));
+            if ($(".new-post-atmts-list").css("display") == "none") {
+              $(".new-post-atmts-list").css("display", "block");
+            }
+            let txt = "";
+            droppedFiles.list.forEach((item, i) => {
+              txt += item.name + ", "
+            });
+            txt = txt.replace(new RegExp(", $"), "");
+            $(".new-post-atmts-list").text(txt);
+          } else {
+            $(`label[for="npf-atmts"]`).text(droppedFiles.list[0].name);
+          }
+        }
+
+        if (isAdvancedUpload) {
+          droppedFiles = {
+            list: [],
+            length: function(type="all") {
+              if (type == "all") {
+                return this.list.length;
+              } else if (type == "img") {
+                let x=0;
+                // let IMAGE_EXT = ["jpg", "jpeg", "png"];
+                this.list.forEach((item, i) => {
+                  let extension = item.name.split(".")[item.name.split(".").length-1];
+                  if (IMAGE_EXT.includes(extension)) { x++; }
+                });
+                return x;
+              } else if (type == "non_img") {
+                let x=0;
+                // let IMAGE_EXT = ["jpg", "jpeg", "png"];
+                this.list.forEach((item, i) => {
+                  let extension = item.name.split(".")[item.name.split(".").length-1];
+                  if (!IMAGE_EXT.includes(extension)) { x++; }
+                });
+                return x;
+              } else {
+                return 0;
+              }
+            },
+            add: function(files) {
+              this.list = [...this.list, ...files];
+            },
+            has: function(name) {
+              let rt = false;
+              this.list.forEach((item, i) => {
+                if (item.name == name) {
+                  rt = true;
+                  return;
+                }
+              });
+              return rt;
+            }
+          };
+          var dropbox = $("td#new-post-form-atmts")
+          $(".modal-new-post form").addClass('has-advanced-upload');
+          dropbox.on("drag dragstart dragend dragover dragenter dragleave drop", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+          })
+          .on("dragover dragenter", function() {
+            if (!dropbox.hasClass("is-dragover")) {
+              dropbox.addClass("is-dragover");
+              dropbox.animate({
+                backgroundColor: "rgba(129, 159, 214, 0.3)",
+                outlineOffset: "-2.5vmin"
+              }, 150);
+            }
+          })
+          .on("dragleave dragend drop", function(e) {
+            if (dropbox.has(e.relatedTarget).length == 1 || dropbox[0] == e.relatedTarget) {
+              return;
+            }
+            if (dropbox.hasClass("is-dragover")) {
+              dropbox.animate({
+                backgroundColor: "white",
+                outlineOffset: "-1.5vmin"
+              }, 75, function() {
+                dropbox.removeClass("is-dragover");
+              });
+            }
+          })
+          .on("drop", function(e) {
+            safeAddFileDrop(e.originalEvent.dataTransfer.files);
+            updateFileDisplay();
+          });
+        }
+
+        function safeAddFileDrop($files) {
+          let addFiles = [];
+          let dupFiles = [];
+          let bannedFiles = [];
+          let non_img_file = droppedFiles.length("non_img");
+          let img_file = droppedFiles.length("img");
+          let warnings = [];
+          $.each($files, (i, item) => {
+            if (!droppedFiles.has(item.name)) {
+              let extension = item.name.split(".")[item.name.split(".").length-1];
+              if (IMAGE_EXT.includes(extension)) {
+                img_file++;
+                if (img_file <= 10) {
+                  addFiles.push(item);
+                } else {
+                  if (!warnings.includes("img-limit")) { warnings.push("img-limit"); }
+                }
+              } else if (ALLOWED_EXT.includes(extension)) {
+                non_img_file++;
+                if (non_img_file <= 4) {
+                  addFiles.push(item);
+                } else {
+                  if (!warnings.includes("non-img-limit")) { warnings.push("non-img-limit"); }
+                }
+              } else {
+                bannedFiles.push(item);
+              }
+            } else {
+              dupFiles.push(item);
+            }
+          });
+          let too_much_delay = 0;
+          if (dupFiles.length > 0) {
+            too_much_delay += 3500;
+            if ($(".modal-warning").css("display") == "none") {
+              $(".modal-warning-title").text("重複檔案")
+              let txt = "";
+              dupFiles.forEach((item, i) => {
+                txt += " " + item.name + ",";
+              });
+              txt = txt.replace(new RegExp(",$"), "");
+              $(".modal-warning-content").text(txt);
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }, 2500));
+            }
+          }
+          if (bannedFiles.length > 0) {
+            setTimeout(function() {
+              $(".modal-warning-title").text("以下檔案被禁止上傳 (非圖像檔案只允許 .pdf, .docx, .doc):");
+              let txt = "";
+              bannedFiles.forEach((item, i) => {
+                txt += " " + item.name + ",";
+              });
+              txt = txt.replace(new RegExp(",$"), "");
+              $(".modal-warning-content").text(txt);
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }, 2500));
+            }, too_much_delay)
+            too_much_delay += 3500
+          }
+          setTimeout(function() {
+            if (warnings.includes("img-limit")) {
+              $(".modal-warning-title").text("過多圖像檔案");
+              $(".modal-warning-content").text(`最多只可上傳 10 個圖像檔案，你目前已上傳 ${img_file} 個圖像檔案`);
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }, 2500))
+            }
+          }, too_much_delay);
+          if (warnings.includes("img-limit")) { too_much_delay += 3500; }
+          setTimeout(function() {
+            if (warnings.includes("non-img-limit")) {
+              $(".modal-warning-title").text("過多非圖像檔案");
+              $(".modal-warning-content").text(`最多只可上傳 4 個非圖像檔案，你目前已上傳 ${non_img_file} 個非圖像檔案`);
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }, 2500));
+            }
+          }, too_much_delay);
+          if (warnings == "") {
+            droppedFiles.add(addFiles);
+          }
+        }
+
+        $(`.modal-new-post input[type="file"]`).change(function() {
+          safeAddFileDrop($(this)[0].files);
+          $(this)[0].value = "";
+          updateFileDisplay();
+        })
+
+        $(".modal-new-post form").submit(function(e) {
+          let $form = $(this);
+          if ($form.hasClass("is-uploading")) return false;
+          e.preventDefault();
+
+          let delay = 0;
+          let error = false;
+          if (droppedFiles.length() == 0) {
+            error = true;
+            if ($(".modal-warning").css("display") != "none") {
+              delay += 2500;
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+            }
+            setTimeout(function() {
+              $(".modal-warning-title").text("你還沒上載檔案");
+              $(".modal-warning-content").text("");
+              $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }, 2500));
+            }, delay);
+            delay += 3000;
+          }
+
+          if ($("#npf-caption").val() == "") {
+            error = true;
+            setTimeout(function() {
+              delay = 0;
+              if ($(".modal-warning").css("display") != "none") {
+                delay = 2500;
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }
+              setTimeout(function() {
+                $(".modal-warning-title").text("你還沒輸入筆記描述");
+                $(".modal-warning-content").text("");
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                  $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+                }, 2500));
+              }, delay);
+            }, delay)
+          }
+
+          if (error) {
+            return;
+          }
+
+          let $input = $(`#new-post-form-atmts input[type="file"]`);
+          $form.addClass("is-uploading").removeClass("is-error");
+
+          var ajaxData = new FormData($form[0]);
+          if (droppedFiles.length() > 0) {
+            droppedFiles.list.forEach((item, i) => {
+              ajaxData.append("atmts[]", item);
+            });
+          }
+
+          $.ajax({
+            url: $form.attr("action"),
+            type: "POST",
+            data: ajaxData,
+            dataType: 'json',
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+              console.log("Request sent:", data);
+              $form.addClass(data.success ? "is-success" : "is-error");
+              if (!data.success) console.log("Error:", data.error);
+            },
+            error: function(data) {
+              console.log("Error:", data.responseText);
+              $form.addClass("is-error").removeClass("is-uploading");
+            }
+          }).done(function() {
+            $form.removeClass("is-uploading");
+            $form.trigger("reset");
+            $(".modal").toggle("fade", 300);
+            $(".modal-new-post").toggle("slide", {direction: "down"}, 300);
+            $(".posts").toggle("slide", {direction: "up"}, 1000);
+            setTimeout(function() {
+              $(".posts>*").remove();
+              loadPosts();
+            }, 1000);
+          });
         })
       });
     </script>
   </head>
   <body>
     <div class="modal">
-      <div class="modal-content">
+      <div class="modal-content modal-image-preview">
         <span class="modal-close">&times;</span>
-        <img src="">
+        <div class="modal-image-preview-container">
+          <a href=""><img src=""></a>
+        </div>
+        <img class="modal-image-next" src="next.png">
+        <img class="modal-image-previous" src="next.png">
       </div>
+      <div class="modal-content modal-new-post">
+        <span class="modal-close">&times;</span>
+        <form action="newpost.php" method="POST" target="_self">
+          <table>
+            <th>分享你的筆記</th>
+            <tr>
+              <td class="new-post-form-label" id="new-post-form-caption"><label for="npf-caption">筆記描述</label></td>
+              <td class="new-post-form-field" id="new-post-form-caption"><textarea name="caption" id="npf-caption" placeholder="在此輸入筆記描述..."></textarea></td>
+            </tr>
+            <tr>
+              <input multiple type="file" name="atmts[]" id="npf-atmts" data-multiple-caption="已選擇 {count} 個檔案" />
+              <td id="new-post-form-atmts">
+                <div class="new-post-atmts-input">
+                  <label for="npf-atmts"><strong>選擇要上傳的檔案</strong><span class="new-post-atmts-dragndrop">或拖拽至此方格內</span></label>
+                </div>
+                <div class="new-post-atmts-list"><p></p></div>
+                <div class="new-post-atmts-uploading">上載中...</div>
+                <div class="new-post-atmts-success">上載完成</div>
+                <div class="new-post-atmts-error">上載途中發生錯誤</div>
+              </td>
+            </tr>
+            <tr>
+              <td id="new-post-form-submit">
+                <input type="submit" value="分享"></input>
+              </td>
+            </tr>
+          </table>
+        </form>
+        <div class="modal-warning">
+          <p class="modal-warning-title"></p>
+          <p class="modal-warning-content"></p>
+        </div>
+      </div>
+    </div>
+    <div class="new-posts-alert">
+      <h3>提醒</h3>
+      <p>有新的筆記分享!</p>
+      <button>重新載入</button>
     </div>
     <div class="heading">
       <!-- TODO replace with logo (picture) -->
@@ -78,8 +385,15 @@
         <li><a href="../notes-sharing">筆記分享</a></li>
       </ul>
     </div>
-    <div class="posts">
+    <div class="new-post">
+      <textarea placeholder="按此分享自己的筆記..." readonly></textarea>
+    </div>
+    <div style="height: 3vh; width: 100%; background-color: rgb(36, 37, 38)"></div>
+    <div class="posts" style="display: none">
       <!-- Contents loaded by JS -->
+    </div>
+    <div class="loader">
+      <div class="loader-icon" />
     </div>
   </body>
 </html>

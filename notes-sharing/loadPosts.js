@@ -1,101 +1,217 @@
-$(() => {
-  // Load posts
-  $.ajaxSetup({cache: false});
-  $.get("fetchPosts.php", data => {
-    var list = JSON.parse(data);
-    list.forEach((data, index) => {
-      let uid = data[0];
-      let timestamp = data[1];
-      let post_id = data[2];
-      $.getJSON(`data/${uid}/${post_id}/desc.json`, function(postData) {
-        $("div.posts").append(`<div class="post" id="${uid}_${post_id}" style="order: ${index}"></div>`);
-        $(`div.post#${uid}_${post_id}`).append(`<div class="post_heading"></div>`);
-        $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_author"><h3>Notebook User #${uid}</h3></div>`);
-        $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_timestamp"><h4>${timestamp}</h4></div>`);
-        $(`div.post#${uid}_${post_id}`).append(`<div class="post_content"></div>`);
-        $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_caption"><p>${postData.caption}</p></div>`);
-        $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_attachments"></div>`);
-        const IMAGE_EXT = ["jpg", "jpeg", "png"];
-        let main_img = "none";
-        let load_atms = [];
-        postData.attachments.forEach((atm, i) => {
-          let extension = atm.split(".")[atm.split(".").length-1];
-          if (IMAGE_EXT.includes(extension)) {
-            if (main_img == "none") {
-              load_atms = [atm, ...load_atms];
-              main_img = atm;
-            } else {
-              load_atms.push(atm);
-            }
-          } else {
-            load_atms.push(atm);
-          }
-        });
+loadingPost = false;
+loadingCount = 0;
+loadingTarget = 0;
 
-        console.log(load_atms);
-
+function addPostDisplay(data, order) {
+  let uid = data[0];
+  let timestamp = data[1];
+  let post_id = data[2];
+  $.getJSON(`data/${uid}/${post_id}/desc.json`, function(postData) {
+    $("div.posts").append(`<div class="post" id="${uid}_${post_id}" style="order: ${order}"></div>`);
+    $(`div.post#${uid}_${post_id}`).append(`<div class="post_heading"></div>`);
+    $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_author"><h3>Notebook User #${uid}</h3></div>`);
+    $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_timestamp"><h4>${timestamp}</h4></div>`);
+    $(`div.post#${uid}_${post_id}`).append(`<div class="post_content"></div>`);
+    $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_caption"><p>${postData.caption}</p></div>`);
+    $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_attachments"></div>`);
+    const IMAGE_EXT = ["jpg", "jpeg", "png"];
+    let main_img = "none";
+    let load_atms = [];
+    let other_img = [];
+    postData.attachments.forEach((atm, i) => {
+      let extension = atm.split(".")[atm.split(".").length-1];
+      if (IMAGE_EXT.includes(extension)) {
         if (main_img == "none") {
-          $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`)
-          postData.attachments.forEach((atm, i) => {
-            $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
-          });
+          load_atms = [atm, ...load_atms];
+          main_img = atm;
         } else {
-          let img = new Image();
-          img.onload = function() {
-            let height = this.height;
-            let width = this.width;
-            let hwratio = height / width;
-            if (this.height > ($(window).height() * 0.6)) {
-              height = $(window).height() * 0.6;
-              width = height / hwratio;
-              let compress_ratio = ($(window).height() * 0.6) / this.height;
-              if ((this.width * compress_ratio) > ($(window).width() * 0.44)) {
-                width = $(window).width() * 0.44;
-              }
-            } else if (this.width > ($(window).width() * 0.44)){
-              width = $(window).width() * 0.44;
-              height = width * hwratio;
-            } else {
-              width /= $(window).width();
-              height /= $(window).height();
-            }
+          other_img.push(atm);
+          load_atms.push(atm);
+        }
+      } else {
+        load_atms.push(atm);
+      }
+    });
 
-            let vmin = ($(window).height() > $(window).width()) ? $(window).width() * 0.01 : $(window).height() * 0.01;
-            let mwidth = width + 2*vmin;
-            let mheight = height + 2*vmin;
-            $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_img_container" style="height: ${mheight}px; width: ${mwidth}px"><div class="atmt_img_preview"><img style="height: ${height}px; width=${width}px;" src="data/${uid}/${post_id}/${main_img}"></div></div>`);
-            $("div.atmt_img_container").click(function() {
-              $(".modal").css("display", "block");
-              $(".modal img").attr("src", `data/${uid}/${post_id}/${main_img}`)
-            });
-            $("div.atmt_img_container").hover(function() {
-              $(".atmt_img_preview img").animate({opacity: "70%"}, 40);
-            }, function() {
-              $(".atmt_img_preview img").animate({opacity: "100%"}, 40);
-            });
-
-            postData.attachments.forEach((atm, i) => {
-              if (atm == main_img) {
+    if (main_img == "none") {
+      $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`)
+      postData.attachments.forEach((atm, i) => {
+        $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
+      });
+      loadingCount++;
+      if (loadingCount == loadingTarget) {
+        finishLoadPosts();
+      }
+    } else {
+      let img = new Image();
+      img.onload = function() {
+        $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_img_container"><img src="data/${uid}/${post_id}/${main_img}"></div>`);
+        let $container = $(`div.post#${uid}_${post_id} .atmt_img_container`);
+        let $img = $(`div.post#${uid}_${post_id} .atmt_img_container img`);
+        $container.click(function() {
+          $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${main_img}`);
+          $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${main_img}`);
+          $(".modal-image-preview-container img").attr("name", main_img);
+          let img_list = JSON.parse($container.attr("list"));
+          $(".modal-image-preview").attr("list", $container.attr("list"));
+          $(".modal-image-next").css("opacity", 0.2);
+          $(".modal-image-previous").css("opacity", 0.2);
+          if (img_list.length > 1) {
+            $(".modal-image-next").css("opacity", 1);
+            $(".modal-image-next").click(function() {
+              if ($(this).css("opacity") == 0.2) {
                 return;
               }
-
-              let extension = atm.split(".")[atm.split(".").length-1];
-              if (IMAGE_EXT.includes(extension)) {
-                console.log(atm);
-                if ($(".atmt_img_more").length == 0) {
-                  $(".atmt_img_preview").append(`<span class="atmt_img_more">...more</span>`);
-                }
-              } else {
-                if ($(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).length == 0) {
-                  $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container" style="width: ${$(window).width()*0.88 - mwidth - 2*vmin}px;"></div>`);
-                }
-                $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
+              let img_index = img_list.indexOf($(".modal-image-preview-container img").attr("name"));
+              let next_img_name = img_list[img_index+1];
+              $(".modal-image-preview-container img").fadeOut(200, function() {
+                $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${next_img_name}`);
+                $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${next_img_name}`);
+                $(".modal-image-preview-container img").attr("name", next_img_name);
+                $(".modal-image-preview-container img").fadeIn(200);
+              });
+              $(".modal-image-previous").animate({opacity: 1}, 200);
+              if ((img_index+2) == img_list.length) {
+                $(".modal-image-next").animate({opacity: 0.2}, 200);
               }
             });
-          };
-          img.src=`data/${uid}/${post_id}/${main_img}`;
+            $(".modal-image-previous").click(function() {
+              if ($(this).css("opacity") == 0.2) {
+                return;
+              }
+              let img_index = img_list.indexOf($(".modal-image-preview-container img").attr("name"));
+              let prev_img_name = img_list[img_index-1];
+              $(".modal-image-preview-container img").fadeOut(200, function() {
+                $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${prev_img_name}`);
+                $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${prev_img_name}`);
+                $(".modal-image-preview-container img").attr("name", prev_img_name);
+                $(".modal-image-preview-container img").fadeIn(200);
+              });
+              $(".modal-image-next").animate({opacity: 1}, 200);
+              if ((img_index-1) == 0) {
+                $(".modal-image-previous").animate({opacity: 0.2}, 200);
+              }
+            });
+          }
+          $(".modal").toggle("fade", 300);
+          $(".modal-image-preview").toggle("slide", {direction: "down"}, 300);
+        });
+        $img.hover(function() {
+          $(this).animate({opacity: "70%"}, 40);
+        }, function() {
+          $(this).animate({opacity: "100%"}, 40);
+        });
+
+        $container.attr("list", JSON.stringify([main_img, ...other_img]));
+
+        postData.attachments.forEach((atm, i) => {
+          if (atm == main_img) {
+            return;
+          }
+
+          let extension = atm.split(".")[atm.split(".").length-1];
+          if (IMAGE_EXT.includes(extension)) {
+            if ($(".atmt_img_more").length == 0) {
+              $container.append(`<span class="atmt_img_more">...more</span>`);
+            }
+          } else {
+            if ($(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).length == 0) {
+              $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`);
+            }
+            $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
+          }
+        });
+        loadingCount++;
+        if (loadingCount == loadingTarget) {
+          finishLoadPosts();
         }
-      });
-    });
+      };
+      img.src=`data/${uid}/${post_id}/${main_img}`;
+    }
   });
+}
+
+function loadPosts(omitno=0) {
+  if (loadingPost) {
+    return;
+  }
+  loadingPost = true;
+  $(".loader-icon").toggle("fade", "100");
+  $.get({
+    url: "fetchPosts.php",
+    data: {type: "data", omit: omitno},
+    cache: false,
+    success: function(list) {
+      loadingTarget = list.length;
+      list.forEach((data, index) => {
+        addPostDisplay(data, index + omitno)
+      });
+    }
+  });
+}
+
+function finishLoadPosts() {
+  loadingCount = 0;
+  if ($(".posts").css("display") == "none") {
+    $(".posts").toggle("slide", {direction: "up"}, 1000);
+  }
+  $(".loader-icon").toggle("fade", "100");
+  setTimeout(function() {
+    loadingPost = false;
+  }, 500);
+}
+
+$(document).ready(() => {
+  $("body").css("background-color", "#242526");
+  $(".loader-icon").hide();
+  $(".new-posts-alert").hide();
+
+  $(".new-posts-alert button").on({
+    click: function() {
+      $alert = $(".new-posts-alert")
+      $alert.addClass("new-posts-alert-active").animate({opacity: 0}, 200);
+      setTimeout(function() {
+        $(".posts").toggle("slide", {direction: "up"}, 1000);
+        $alert.removeClass("new-posts-alert-active").css("display", "none");
+        setTimeout(function() {
+          $(".posts>*").remove();
+          loadPosts();
+        }, 1000);
+      }, 200);
+    }
+  });
+
+  loadPosts();
+
+  $(window).scroll(function() {
+    if ($(document).height() == $(this).height() + $(this).scrollTop()) {
+      if (!loadingPost) {
+        let loaded_posts = $(".posts>*").length;
+        $.get("fetchPosts.php", {type: "number"}, function(data) {
+          if (data.count > loaded_posts) {
+            loadPosts(loaded_posts);
+          }
+        })
+      }
+    }
+  });
+
+  setInterval(function() {
+    let latest_item, uid, post_id
+    latest_item = $(".posts>div").filter(function(i){return $($(".posts>div")[i]).css("order")==0});
+    uid = parseInt($(latest_item).attr("id").replace(new RegExp(".[0-9]+$"), ""));
+    post_id = parseInt($(latest_item).attr("id").replace(new RegExp("^[0-9]+."), ""));
+    $.get("fetchPosts.php", {
+      type: "newposts_number",
+      uid: uid,
+      post_id: post_id
+    }, function(data) {
+      if (data.count > 0) {
+        $alert = $(".new-posts-alert");
+        if ($alert.css("display") == "none") {
+          $alert.css("display", "flex").css("opacity", 0).animate({opacity: 1}, 170);
+        }
+      }
+    })
+  }, 30000); // Every 30s
 });
