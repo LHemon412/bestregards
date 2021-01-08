@@ -97,9 +97,11 @@ function addPostDisplay(data, order) {
           $(".modal-image-preview").toggle("slide", {direction: "down"}, 300);
         });
         $img.hover(function() {
-          $(this).animate({opacity: "70%"}, 40);
+          $(this).animate({opacity: "80%"}, 50);
+          $container.addClass("active");
         }, function() {
-          $(this).animate({opacity: "100%"}, 40);
+          $(this).animate({opacity: "100%"}, 50);
+          $container.removeClass("active");
         });
 
         $container.attr("list", JSON.stringify([main_img, ...other_img]));

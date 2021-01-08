@@ -88,15 +88,16 @@ li.active a {
 
 /* Quote */
 .quote_container {
-  position: absolute;
+  display: block;
   margin: 0;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 70%;
   height: 30%;
+  margin-left: 15%;
+  margin-top: 10%;
+  padding: 5% 0;
   background-color: #33cccc;
   border-radius: 20px;
+  box-shadow: 0px 5px 10px black;
 }
 
 h1#quote {
@@ -107,7 +108,7 @@ h1#quote {
   padding-right: 5%;
   font-family: Quote, cursive;
   font-weight: bold;
-  font-size: 180%;
+  font-size: 3.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
