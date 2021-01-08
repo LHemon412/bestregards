@@ -8,7 +8,7 @@
 include "auth.php";
 
 if (isLoggedIn()) {
-  header("Location: home");
+  header("Location: home")
 } else {
   header("Location: login");
 }
