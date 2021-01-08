@@ -8,7 +8,19 @@ $username = "root";
 $password = "";
 $database = "bestregards";*/
 
+function isLoggedIn() {
+  return isSessionLoggedIn() or isCookieLoggedIn();
+}
+
+function isSessionLoggedIn() {
+  if (!isset($_SESSION)) {
+    session_start();
+  }
+  return isset($_SESSION["username"]);
+}
+
 function isCookieLoggedIn() {
+  return false;
   if (isset($_COOKIE["uid"]) and isset($_COOKIE["hash"])) {
     $uid = $_COOKIE["uid"];
     $hash = $_COOKIE["hash"];
