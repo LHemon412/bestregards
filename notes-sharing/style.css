@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url("../assets/NotoSansTC-Medium.otf");
+}
+
+
 * {
   font-family: Noto Sans TC,HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,"\5FAE\8EDF\6B63\9ED1\9AD4",Microsoft JhengHei,"\5FAE\8EDF\96C5\9ED1",Microsoft YaHei,Microsoft YaHei UI,"\860B\679C\5137\4E2D\9ED1",Apple LiGothic Medium,"\5137\9ED1   Pro",LiHei Pro Medium,sans-serif;
 }

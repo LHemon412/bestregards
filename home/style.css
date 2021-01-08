@@ -1,3 +1,20 @@
+@font-face {
+  font-family: "Noto Sans TC";
+  src: url("../assets/NotoSansTC-Medium.otf");
+}
+
+@font-face {
+  font-family: "Quote";
+  src: url("../assets/Caveat-Medium.ttf");
+  unicode-range: U+00-024F;
+}
+
+@font-face {
+  font-family: "Quote";
+  src: url("../assets/NotoSerifTC-Medium.otf");
+  unicode-range: U+4E00-9FFF;
+}
+
 * {
   font-family: Noto Sans TC,HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,"\5FAE\8EDF\6B63\9ED1\9AD4",Microsoft JhengHei,"\5FAE\8EDF\96C5\9ED1",Microsoft YaHei,Microsoft YaHei UI,"\860B\679C\5137\4E2D\9ED1",Apple LiGothic Medium,"\5137\9ED1   Pro",LiHei Pro Medium,sans-serif;
 }
@@ -11,7 +28,7 @@ body {
 
 /* Heading */
 .heading {
-  height: 8vmin;
+  height: auto;
   width: 100%;
   background-color: #b0d0ff;
 }
@@ -22,7 +39,7 @@ body {
   margin: 0;
   font-family: Cooper Black;
   font-weight: bold;
-  font-size: 5.8vmin;
+  font-size: 5.11vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,7 +55,7 @@ body {
   padding: 0;
   overflow: hidden;
   width: 100%;
-  height: 8vmin;
+  height: auto;
   background-color: #b1b7bd;
 }
 
@@ -61,9 +78,11 @@ li.active a {
   text-decoration: none;
   color: #000;
   background-color: #dddddd;
-  font-size: 3.5vmin;
+  font-size: 3.5vh;
   font-weight: bold;
+  padding: 0.5% 0;
 }
+
 
 
 
@@ -86,7 +105,7 @@ h1#quote {
   margin: 0;
   padding-left: 5%;
   padding-right: 5%;
-  font-family: Centaur;
+  font-family: Quote, cursive;
   font-weight: bold;
   font-size: 180%;
   display: flex;
