@@ -11,7 +11,7 @@ define("USERNAME", "root");
 define("PASSWORD", "");
 define("DATABASE", "bestregards");
 session_start();
-if (!isset($_SESSION["uid"])) {
+if (!isset($_SESSION["username"])) {
   header("Location: ../error.html");
   die();
 }
@@ -39,7 +39,6 @@ $return = [
 
 if (isset($_FILES["atmts"])) {
   $valid_files = [];
-  die(count($_FILES["atmts"]["name"]));
   $return["success"] = true;
   $return["received_files"] = $_FILES["atmts"];
   foreach($_FILES["atmts"]["error"] as $index => $error_code) {
@@ -49,13 +48,20 @@ if (isset($_FILES["atmts"])) {
   }
   $return["valid_files"] = $valid_files;
   $conn = new mysqli(SERVERNAME, USERNAME, PASSWORD, DATABASE);
-  $uid = $_SESSION["uid"];
-  $stmt = $conn->prepare("SELECT post_id FROM studynotes WHERE uid=? ORDER BY post_id DESC LIMIT 1");
-  $stmt->bind_param("i", $uid);
-  $stmt->execute();
-  $post_id = $stmt->get_result()->fetch_assoc()["post_id"] + 1;
-  $target_dir = "data/{$uid}/{$post_id}/";
+  $username = $_SESSION["username"];
 
+  $stmt = $conn->prepare("SELECT COUNT(*) FROM studynotes WHERE username=?");
+  $stmt->bind_param("s", $username);
+  $stmt->execute();
+  $post_id = 1;
+  if ($stmt->get_result()->fetch_assoc()["COUNT(*)"] > 0) {
+    $stmt = $conn->prepare("SELECT post_id FROM studynotes WHERE username=? ORDER BY post_id DESC LIMIT 1");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $post_id = $stmt->get_result()->fetch_assoc()["post_id"] + 1;
+  }
+
+  $target_dir = "data/{$username}/{$post_id}/";
   $image_extensions = ["jpg", "jpeg", "png"];
   foreach($valid_files as $i) {
     $file_name = $_FILES["atmts"]["name"][$i];
@@ -89,7 +95,7 @@ if (isset($_FILES["atmts"])) {
   }
 
   // Move uploaded files to designated locations
-  mkdir($target_dir);
+  mkdir($target_dir, 0777, true);
   $moved_files = [];
   foreach($valid_files as $i) {
     $target_file = $target_dir . basename($_FILES["atmts"]["name"][$i]);
@@ -110,9 +116,9 @@ if (isset($_FILES["atmts"])) {
   fclose($fp);
 
   // Update SQL Database
-  $stmt2 = $conn->prepare("INSERT INTO `studynotes` (`uid`, `timestamp`, `post_id`) VALUES (?, FROM_UNIXTIME(?), ?)");
+  $stmt2 = $conn->prepare("INSERT INTO `studynotes` (`username`, `timestamp`, `post_id`) VALUES (?, FROM_UNIXTIME(?), ?)");
   $timestamp = time();
-  $stmt2->bind_param("iii", $uid, $timestamp, $post_id);
+  $stmt2->bind_param("sii", $username, $timestamp, $post_id);
   $stmt2->execute();
 }
 

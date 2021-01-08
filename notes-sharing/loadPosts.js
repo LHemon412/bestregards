@@ -3,17 +3,17 @@ loadingCount = 0;
 loadingTarget = 0;
 
 function addPostDisplay(data, order) {
-  let uid = data[0];
+  let username = data[0];
   let timestamp = data[1];
   let post_id = data[2];
-  $.getJSON(`data/${uid}/${post_id}/desc.json`, function(postData) {
-    $("div.posts").append(`<div class="post" id="${uid}_${post_id}" style="order: ${order}"></div>`);
-    $(`div.post#${uid}_${post_id}`).append(`<div class="post_heading"></div>`);
-    $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_author"><h3>Notebook User #${uid}</h3></div>`);
-    $(`div.post#${uid}_${post_id} .post_heading`).append(`<div class="post_timestamp"><h4>${timestamp}</h4></div>`);
-    $(`div.post#${uid}_${post_id}`).append(`<div class="post_content"></div>`);
-    $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_caption"><p>${postData.caption}</p></div>`);
-    $(`div.post#${uid}_${post_id} .post_content`).append(`<div class="post_attachments"></div>`);
+  $.getJSON(`data/${username}/${post_id}/desc.json`, function(postData) {
+    $("div.posts").append(`<div class="post" id="${username}_${post_id}" style="order: ${order}"></div>`);
+    $(`div.post#${username}_${post_id}`).append(`<div class="post_heading"></div>`);
+    $(`div.post#${username}_${post_id} .post_heading`).append(`<div class="post_author"><h3>${username}</h3></div>`);
+    $(`div.post#${username}_${post_id} .post_heading`).append(`<div class="post_timestamp"><h4>${timestamp}</h4></div>`);
+    $(`div.post#${username}_${post_id}`).append(`<div class="post_content"></div>`);
+    $(`div.post#${username}_${post_id} .post_content`).append(`<div class="post_caption"><p>${postData.caption}</p></div>`);
+    $(`div.post#${username}_${post_id} .post_content`).append(`<div class="post_attachments"></div>`);
     const IMAGE_EXT = ["jpg", "jpeg", "png"];
     let main_img = "none";
     let load_atms = [];
@@ -34,9 +34,9 @@ function addPostDisplay(data, order) {
     });
 
     if (main_img == "none") {
-      $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`)
+      $(`div.post#${username}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`)
       postData.attachments.forEach((atm, i) => {
-        $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
+        $(`div.post#${username}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${username}/${post_id}/${atm}">${atm}</a></div>`);
       });
       loadingCount++;
       if (loadingCount == loadingTarget) {
@@ -45,12 +45,12 @@ function addPostDisplay(data, order) {
     } else {
       let img = new Image();
       img.onload = function() {
-        $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_img_container"><img src="data/${uid}/${post_id}/${main_img}"></div>`);
-        let $container = $(`div.post#${uid}_${post_id} .atmt_img_container`);
-        let $img = $(`div.post#${uid}_${post_id} .atmt_img_container img`);
+        $(`div.post#${username}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_img_container"><img src="data/${username}/${post_id}/${main_img}"></div>`);
+        let $container = $(`div.post#${username}_${post_id} .atmt_img_container`);
+        let $img = $(`div.post#${username}_${post_id} .atmt_img_container img`);
         $container.click(function() {
-          $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${main_img}`);
-          $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${main_img}`);
+          $(".modal-image-preview-container img").attr("src", `data/${username}/${post_id}/${main_img}`);
+          $(".modal-image-preview-container a").attr("href", `data/${username}/${post_id}/${main_img}`);
           $(".modal-image-preview-container img").attr("name", main_img);
           let img_list = JSON.parse($container.attr("list"));
           $(".modal-image-preview").attr("list", $container.attr("list"));
@@ -65,8 +65,8 @@ function addPostDisplay(data, order) {
               let img_index = img_list.indexOf($(".modal-image-preview-container img").attr("name"));
               let next_img_name = img_list[img_index+1];
               $(".modal-image-preview-container img").fadeOut(200, function() {
-                $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${next_img_name}`);
-                $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${next_img_name}`);
+                $(".modal-image-preview-container img").attr("src", `data/${username}/${post_id}/${next_img_name}`);
+                $(".modal-image-preview-container a").attr("href", `data/${username}/${post_id}/${next_img_name}`);
                 $(".modal-image-preview-container img").attr("name", next_img_name);
                 $(".modal-image-preview-container img").fadeIn(200);
               });
@@ -82,8 +82,8 @@ function addPostDisplay(data, order) {
               let img_index = img_list.indexOf($(".modal-image-preview-container img").attr("name"));
               let prev_img_name = img_list[img_index-1];
               $(".modal-image-preview-container img").fadeOut(200, function() {
-                $(".modal-image-preview-container img").attr("src", `data/${uid}/${post_id}/${prev_img_name}`);
-                $(".modal-image-preview-container a").attr("href", `data/${uid}/${post_id}/${prev_img_name}`);
+                $(".modal-image-preview-container img").attr("src", `data/${username}/${post_id}/${prev_img_name}`);
+                $(".modal-image-preview-container a").attr("href", `data/${username}/${post_id}/${prev_img_name}`);
                 $(".modal-image-preview-container img").attr("name", prev_img_name);
                 $(".modal-image-preview-container img").fadeIn(200);
               });
@@ -115,10 +115,10 @@ function addPostDisplay(data, order) {
               $container.append(`<span class="atmt_img_more">...more</span>`);
             }
           } else {
-            if ($(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).length == 0) {
-              $(`div.post#${uid}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`);
+            if ($(`div.post#${username}_${post_id} .post_content .post_attachments .atmt_others_container`).length == 0) {
+              $(`div.post#${username}_${post_id} .post_content .post_attachments`).append(`<div class="atmt_others_container"></div>`);
             }
-            $(`div.post#${uid}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${uid}/${post_id}/${atm}">${atm}</a></div>`);
+            $(`div.post#${username}_${post_id} .post_content .post_attachments .atmt_others_container`).append(`<div class="atmt_others" style="order: ${i};"><a href="data/${username}/${post_id}/${atm}">${atm}</a></div>`);
           }
         });
         loadingCount++;
@@ -126,7 +126,7 @@ function addPostDisplay(data, order) {
           finishLoadPosts();
         }
       };
-      img.src=`data/${uid}/${post_id}/${main_img}`;
+      img.src=`data/${username}/${post_id}/${main_img}`;
     }
   });
 }
@@ -197,13 +197,15 @@ $(document).ready(() => {
   });
 
   setInterval(function() {
-    let latest_item, uid, post_id
+    if ($(".posts>div").length == 0) { return; }
+
+    let latest_item, username, post_id
     latest_item = $(".posts>div").filter(function(i){return $($(".posts>div")[i]).css("order")==0});
-    uid = parseInt($(latest_item).attr("id").replace(new RegExp(".[0-9]+$"), ""));
+    username = parseInt($(latest_item).attr("id").replace(new RegExp(".[0-9]+$"), ""));
     post_id = parseInt($(latest_item).attr("id").replace(new RegExp("^[0-9]+."), ""));
     $.get("fetchPosts.php", {
       type: "newposts_number",
-      uid: uid,
+      username: username,
       post_id: post_id
     }, function(data) {
       if (data.count > 0) {

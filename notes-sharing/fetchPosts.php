@@ -31,23 +31,11 @@ if (isset($_GET["type"])) {
     $result = $conn->query("SELECT COUNT(*) FROM `studynotes`");
     echo json_encode(["count" => intval($result->fetch_assoc()["COUNT(*)"])]);
   } else if ($_GET["type"] == "newposts_number") {
-    if (isset($_GET["uid"]) and isset($_GET["post_id"])) {
-      $stmt = $conn->prepare("SELECT COUNT(*) FROM studynotes WHERE timestamp > (SELECT timestamp FROM studynotes WHERE uid=? AND post_id=?)");
-      $stmt->bind_param("ii", $_GET["uid"], $_GET["post_id"]);
+    if (isset($_GET["username"]) and isset($_GET["post_id"])) {
+      $stmt = $conn->prepare("SELECT COUNT(*) FROM studynotes WHERE timestamp > (SELECT timestamp FROM studynotes WHERE username=? AND post_id=?)");
+      $stmt->bind_param("ii", $_GET["username"], $_GET["post_id"]);
       $stmt->execute();
       echo json_encode(["count" => intval($stmt->get_result()->fetch_assoc()["COUNT(*)"])]);
-    }
-  } else if ($_GET["type"] == "newposts_data") {
-    if (isset($_GET["uid"]) and isset($_GET["post_id"])) {
-      $stmt = $conn->prepare("SELECT COUNT(*) FROM studynotes WHERE timestamp > (SELECT timestamp FROM studynotes WHERE uid=? AND post_id=?)");
-      $stmt->bind_param("ii", $_GET["uid"], $_GET["post_id"]);
-      $stmt->execute();
-      $new_posts = $stmt->get_result()->fetch_assoc()["COUNT(*)"];
-      $stmt = $conn->prepare("SELECT * FROM studynotes ORDER BY timestamp DESC LIMIT ?");
-      $stmt->bind_param("i", $new_posts);
-      $stmt->execute();
-      $result = $stmt->get_result();
-      echo json_encode($result->fetch_all());
     }
   }
 }
