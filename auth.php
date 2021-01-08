@@ -39,4 +39,21 @@ function isCookieLoggedIn() {
   }
 }
 
+function authLogin($username, $password) {
+  $conn = new mysqli(SERVERNAME, USERNAME, PASSWORD, DATABASE);
+  $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username=? AND password=?");
+  $stmt->bind_param("ss", $username, $password);
+  $stmt->execute();
+  if ($stmt->get_result()->fetch_assoc()["COUNT(*)"] == 1) {
+    return true;
+  }
+  $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email=? AND password=?");
+  $stmt->bind_param("ss", $username, $password);
+  $stmt->execute();
+  if ($stmt->get_result()->fetch_assoc()["COUNT(*)"] == 1) {
+    return true;
+  }
+  return false;
+}
+
 ?>

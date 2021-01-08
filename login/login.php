@@ -9,7 +9,6 @@ header("Content-type: application/json");
 $return = [
   "success" => true
 ];
-error_reporting(E_ALL ^ E_NOTICE);
 
 $username = $_POST["username"];
 $password = $_POST["password"];
