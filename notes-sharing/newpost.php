@@ -28,6 +28,11 @@ if (!isset($_POST["caption"])) {
   die();
 }
 
+if (!isset($_POST["tags"])) {
+  echo json_encode(["error" => ["code" => 0]]);
+  die();
+}
+
 if (!isset($_FILES["atmts"])) {
   echo json_encode(["error" => ["code" => 0]]);
   die();
@@ -111,7 +116,8 @@ if (isset($_FILES["atmts"])) {
   $fp = fopen($target_dir . "desc.json", "w");
   fwrite($fp, json_encode([
     "caption" => $_POST["caption"],
-    "attachments" => $moved_files
+    "attachments" => $moved_files,
+    "tags" => $_POST["tags"]
   ]));
   fclose($fp);
 

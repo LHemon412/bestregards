@@ -6,12 +6,49 @@ function addPostDisplay(data, order) {
   let username = data[0];
   let timestamp = data[1];
   let post_id = data[2];
+  let likes = JSON.parse(data[3]);
   $.getJSON(`data/${username}/${post_id}/desc.json`, function(postData) {
     $("div.posts").append(`<div class="post" id="${username}_${post_id}" style="order: ${order}"></div>`);
     $(`div.post#${username}_${post_id}`).append(`<div class="post_heading"></div>`);
     $(`div.post#${username}_${post_id} .post_heading`).append(`<div class="post_author"><h3>${username}</h3></div>`);
     $(`div.post#${username}_${post_id} .post_heading`).append(`<div class="post_timestamp"><h4>${timestamp}</h4></div>`);
+    $(`div.post#${username}_${post_id}`).append(`<div class="post_tags"></div>`);
+    postData.tags.forEach((tag, i) => {
+      $(`div.post#${username}_${post_id} .post_tags`).append(`<div class="post_tag">${tag}</div>`)
+    });
     $(`div.post#${username}_${post_id}`).append(`<div class="post_content"></div>`);
+    $(`div.post#${username}_${post_id}`).append(`<div class="post_interactions"></div>`);
+    if (likes.includes($("#username").text())) {
+      $(`div.post#${username}_${post_id} .post_interactions`).append(`<img src="../assets/like.svg" class="liked"></img>`);
+    } else {
+      $(`div.post#${username}_${post_id} .post_interactions`).append(`<img src="../assets/like.svg"></img>`);
+    }
+    $(`div.post#${username}_${post_id} .post_interactions`).append(`<span>${likes.length}</span>`);
+    $(`div.post#${username}_${post_id} .post_interactions img`).click(function() {
+      let $img = $(`div.post#${username}_${post_id} .post_interactions img`);
+      if ($img.hasClass("processing")) { return; }
+      let id = $img.parent().parent().attr("id").split("_");
+      $img.addClass("processing");
+      if ($img.hasClass("liked")) {
+        $.post("updateLike.php", {
+          username: id[0],
+          post_id: id[1],
+          type: "unlike"
+        }, function(data) {
+          $img.removeClass("liked processing");
+          $img.parent().children().filter("span").text(data.likes);
+        });
+      } else {
+        $.post("updateLike.php", {
+          username: id[0],
+          post_id: id[1],
+          type: "like"
+        }, function(data) {
+          $img.addClass("liked").removeClass("processing");
+          $img.parent().children().filter("span").text(data.likes);
+        });
+      }
+    });
     $(`div.post#${username}_${post_id} .post_content`).append(`<div class="post_caption"><p>${postData.caption}</p></div>`);
     $(`div.post#${username}_${post_id} .post_content`).append(`<div class="post_attachments"></div>`);
     const IMAGE_EXT = ["jpg", "jpeg", "png"];

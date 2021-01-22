@@ -12,18 +12,18 @@
       const IMAGE_EXT = ["jpg", "jpeg", "png"];
       const ALLOWED_EXT = ["pdf", "docx", "doc"];
       $(function() {
+        $.get("../fetch/fetchUsername.php", data => {
+          $("#username").text(data.username);
+        })
+
         $(".modal-warning").hide();
 
         $(".navigation_bar a").on({
           mouseenter: function() {
-            $(this).css("background-color", "#a5b6c4");
+            $(this).css("background-color", "#363636");
           },
           mouseleave: function() {
-            if ($(this).parent().attr("class") == "active") {
-              $(this).css("background-color", "white");
-            } else {
-              $(this).css("background-color", "#dddddd");
-            }
+            $(this).css("background-color", "#767676");
           }
         });
 
@@ -44,8 +44,12 @@
           $(".modal-new-post").toggle("slide", {direction: "down"}, 300);
         })
 
-        $("td#new-post-form-atmts").click(function() {
+        $("#modal-np-input-atmts").click(function() {
           $("input#npf-atmts").trigger("click");
+        });
+
+        $(`.modal-np-tags`).click(function() {
+          $(this).toggleClass("selected");
         });
 
         // Check for advance upload 'dragndrop'
@@ -113,7 +117,7 @@
               return rt;
             }
           };
-          var dropbox = $("td#new-post-form-atmts")
+          var dropbox = $("#modal-np-input-atmts");
           $(".modal-new-post form").addClass('has-advanced-upload');
           dropbox.on("drag dragstart dragend dragover dragenter dragleave drop", function(e) {
             e.preventDefault();
@@ -280,6 +284,24 @@
             }, delay)
           }
 
+          if ($("#modal-np-input-tags .selected").length == 0) {
+            error = true;
+            setTimeout(function() {
+              delay = 0;
+              if ($(".modal-warning").css("display") != "none") {
+                delay = 2500;
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+              }
+              setTimeout(function() {
+                $(".modal-warning-title").text("你還沒選擇筆記科目");
+                $(".modal-warning-content").text("");
+                $(".modal-warning").toggle("slide", {direction: "down"}, 400, setTimeout(function() {
+                  $(".modal-warning").toggle("slide", {direction: "down"}, 400);
+                }, 2500));
+              }, delay)
+            }, delay);
+          }
+
           if (error) {
             return;
           }
@@ -293,6 +315,9 @@
               ajaxData.append("atmts[]", item);
             });
           }
+          $("#modal-np-input-tags .selected").each((i, item) => {
+            ajaxData.append("tags[]", item.innerHTML);
+          });
 
           $.ajax({
             url: $form.attr("action"),
@@ -327,6 +352,7 @@
     </script>
   </head>
   <body>
+    <p id="username" style="display: none;"></p>
     <div class="modal">
       <div class="modal-content modal-image-preview">
         <span class="modal-close">&times;</span>
@@ -339,30 +365,47 @@
       <div class="modal-content modal-new-post">
         <span class="modal-close">&times;</span>
         <form action="newpost.php" method="POST" target="_self">
-          <table>
-            <th>分享你的筆記</th>
-            <tr>
-              <td class="new-post-form-label" id="new-post-form-caption"><label for="npf-caption">筆記描述</label></td>
-              <td class="new-post-form-field" id="new-post-form-caption"><textarea name="caption" id="npf-caption" placeholder="在此輸入筆記描述..."></textarea></td>
-            </tr>
-            <tr>
-              <input multiple type="file" name="atmts[]" id="npf-atmts" data-multiple-caption="已選擇 {count} 個檔案" />
-              <td id="new-post-form-atmts">
-                <div class="new-post-atmts-input">
-                  <label for="npf-atmts"><strong>選擇要上傳的檔案</strong><span class="new-post-atmts-dragndrop">或拖拽至此方格內</span></label>
-                </div>
-                <div class="new-post-atmts-list"><p></p></div>
-                <div class="new-post-atmts-uploading">上載中...</div>
-                <div class="new-post-atmts-success">上載完成</div>
-                <div class="new-post-atmts-error">上載途中發生錯誤</div>
-              </td>
-            </tr>
-            <tr>
-              <td id="new-post-form-submit">
-                <input type="submit" value="分享"></input>
-              </td>
-            </tr>
-          </table>
+          <div id="modal-np-heading">分享你的筆記或學習資料</div>
+          <label for="modal-np-input-caption">筆記/資料描述</label>
+          <textarea id="modal-np-input-caption" name="caption" type="text"></textarea>
+          <label for="modal-np-input-tags">科目</label>
+          <div id="modal-np-input-tags">
+            <span class="modal-np-tags">中國語文</span>
+            <span class="modal-np-tags">英國語文</span>
+            <span class="modal-np-tags">數學(必修部分)</span>
+            <span class="modal-np-tags">數學(延伸部分單元一)</span>
+            <span class="modal-np-tags">數學(延伸部分單元二)</span>
+            <span class="modal-np-tags">通識教育</span>
+            <span class="modal-np-tags">生物</span>
+            <span class="modal-np-tags">化學</span>
+            <span class="modal-np-tags">物理</span>
+            <span class="modal-np-tags">經濟</span>
+            <span class="modal-np-tags">地理</span>
+            <span class="modal-np-tags">歷史</span>
+            <span class="modal-np-tags">企業、會計與財務概論</span>
+            <span class="modal-np-tags">資訊及通訊科技</span>
+            <span class="modal-np-tags">中國文學</span>
+            <span class="modal-np-tags">英語文學</span>
+            <span class="modal-np-tags">中國歷史</span>
+            <span class="modal-np-tags">旅遊與款待</span>
+            <span class="modal-np-tags">倫理與宗教</span>
+            <span class="modal-np-tags">音樂</span>
+            <span class="modal-np-tags">視覺藝術</span>
+            <span class="modal-np-tags">體育</span>
+            <span class="modal-np-tags">科技與生活</span>
+            <span class="modal-np-tags">設計與應用科技</span>
+          </div>
+          <input multiple type="file" name="atmts[]" id="npf-atmts" data-multiple-caption="已選擇 {count} 個檔案" />
+          <div id="modal-np-input-atmts">
+            <div class="new-post-atmts-input">
+              <label for="npf-atmts"><strong>選擇要上傳的檔案</strong><span class="new-post-atmts-dragndrop">或拖拽至此方格內</span></label>
+            </div>
+            <div class="new-post-atmts-list"><p></p></div>
+            <div class="new-post-atmts-uploading">上載中...</div>
+            <div class="new-post-atmts-success">上載完成</div>
+            <div class="new-post-atmts-error">上載途中發生錯誤</div>
+          </div>
+          <input type="submit" value="分享"></input>
         </form>
         <div class="modal-warning">
           <p class="modal-warning-title"></p>
@@ -376,19 +419,21 @@
       <button>重新載入</button>
     </div>
     <div class="heading">
-      <!-- TODO replace with logo (picture) -->
-      <h1>Best Regards.</h1>
+      <img src="../logo.png">
     </div>
     <div class="navigation_bar">
       <ul>
         <li><a href="../home">主頁</a></li>
-        <li class="active"><a href="../notes-sharing">筆記分享</a></li>
+        <li><a href="../notes-sharing">筆記分享</a></li>
+        <li><a href="../timer">溫習計時</a></li>
+        <li></li>
+        <li><a href="../">商店網頁</a></li>
       </ul>
     </div>
     <div class="new-post">
-      <textarea placeholder="按此分享自己的筆記..." readonly></textarea>
+      <textarea placeholder="按此分享自己的筆記... 你可以在這裏分享你的筆記或其他學習資料" readonly></textarea>
     </div>
-    <div style="height: 3vh; width: 100%; background-color: rgb(36, 37, 38)"></div>
+    <div style="height: 3vh; width: 100%;"></div>
     <div class="posts" style="display: none">
       <!-- Contents loaded by JS -->
     </div>
