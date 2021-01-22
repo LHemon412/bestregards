@@ -1,27 +1,28 @@
 @font-face {
-  font-family: "Noto Sans TC";
-  src: url("../assets/NotoSansTC-Medium.otf");
+  font-family: "System";
+  src: url("../assets/chinese_handwrite.ttf");
 }
 
 @font-face {
   font-family: "Quote";
-  src: url("../assets/Caveat-Medium.ttf");
+  src: local("Playlist Script"), url("../assets/Playlist_Script.otf");
   unicode-range: U+00-024F;
 }
 
 @font-face {
   font-family: "Quote";
-  src: url("../assets/NotoSerifTC-Medium.otf");
+  src: url("../assets/chinese_handwrite.ttf");
   unicode-range: U+4E00-9FFF;
 }
 
 * {
-  font-family: Noto Sans TC,HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,"\5FAE\8EDF\6B63\9ED1\9AD4",Microsoft JhengHei,"\5FAE\8EDF\96C5\9ED1",Microsoft YaHei,Microsoft YaHei UI,"\860B\679C\5137\4E2D\9ED1",Apple LiGothic Medium,"\5137\9ED1   Pro",LiHei Pro Medium,sans-serif;
+  font-family: System, sans-serif;
 }
 
 body {
   margin: 0;
-  background-color: #242526;
+  background-image: url("../assets/background.jpg");
+  background-size: 100vw 100vh;
 }
 
 
@@ -29,21 +30,16 @@ body {
 /* Heading */
 .heading {
   height: auto;
-  width: 100%;
-  background-color: #b0d0ff;
+  background-color: #f6f6f6;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2vh 0;
+  padding-left: 4%;
 }
 
-.heading h1 {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  font-family: Cooper Black;
-  font-weight: bold;
-  font-size: 5.11vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.heading img {
+  height: 11vh;
 }
 
 
@@ -52,32 +48,34 @@ body {
 .navigation_bar ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0 5%;
   overflow: hidden;
-  width: 100%;
-  height: auto;
-  background-color: #b1b7bd;
+  height: 8vh;
+  background-color: #767676;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .navigation_bar li {
-  height: 100%;
-  float: left;
+  display: block;
+  height: 8vh;
+  width: 20%;
 }
 
 li.active a {
-  background-color: white;
+  background-color: #767676;
 }
 
 .navigation_bar a {
   height: 100%;
-  width: 33vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   text-decoration: none;
-  color: #000;
-  background-color: #dddddd;
+  color: white;
+  background-color: #767676;
   font-size: 3.5vh;
   font-weight: bold;
   padding: 0.5% 0;
@@ -95,22 +93,17 @@ li.active a {
   margin-left: 15%;
   margin-top: 10%;
   padding: 5% 0;
-  background-color: #33cccc;
   border-radius: 20px;
-  box-shadow: 0px 5px 10px black;
+  opacity: 0.9;
 }
 
 h1#quote {
   height: 100%;
-  width: 90%;
+  width: 100%;
   margin: 0;
-  padding-left: 5%;
-  padding-right: 5%;
   font-family: Quote, cursive;
   font-weight: bold;
-  font-size: 3.5vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-size: 5vh;
   text-align: center;
+  color: #123460;
 }

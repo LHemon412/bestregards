@@ -9,14 +9,10 @@
     $(function() {
       $(".navigation_bar a").on({
         mouseenter: function() {
-          $(this).css("background-color", "#a5b6c4");
+          $(this).css("background-color", "#363636");
         },
         mouseleave: function() {
-          if ($(this).parent().attr("class") == "active") {
-            $(this).css("background-color", "white");
-          } else {
-            $(this).css("background-color", "#dddddd");
-          }
+          $(this).css("background-color", "#767676");
         }
       });
 
@@ -29,13 +25,15 @@
   </head>
   <body>
     <div class="heading">
-      <!-- TODO replace with logo (picture) -->
-      <h1>Best Regards.</h1>
+      <img src="../logo.png">
     </div>
     <div class="navigation_bar">
       <ul>
-        <li class="active"><a href="../home">主頁</a></li>
+        <li><a href="../home">主頁</a></li>
         <li><a href="../notes-sharing">筆記分享</a></li>
+        <li><a href="../timer">溫習計時</a></li>
+        <li></li>
+        <li><a href="../">商店網頁</a></li>
       </ul>
     </div>
     <div class="quote_container">

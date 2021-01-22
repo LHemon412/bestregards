@@ -1,14 +1,18 @@
 @font-face {
-  font-family: "Noto Sans TC";
-  src: url("../assets/NotoSansTC-Medium.otf");
+  font-family: "System";
+  src: url("../assets/chinese_handwrite.ttf");
 }
 
+
 * {
-  font-family: "Noto Sans TC", arial;
+  font-family: System , arial;
 }
 
 body {
-  background-color: #8dc5df;
+  /* background-color: #8dc5df; */
+  background-image: url("../assets/background.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .register-panel {
@@ -18,14 +22,14 @@ body {
   margin: 8vh 20%;
   width: 50%;
   height: 80vh;
-  background-color: #2b2b2b;
+  background-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0px 5px 10px black;
 }
 
 .register-panel h1 {
   grid-column: 1;
   text-align: center;
-  color: white;
+  color: black;
   font-size: 5vmin;
 }
 
@@ -45,7 +49,7 @@ body {
 }
 
 .register-panel label {
-  color: white;
+  color: black;
   font-size: 3vmin;
 }
 
@@ -75,7 +79,7 @@ body {
 
 .submit-container {
   align-items: center;
-  background-color: #000;
+  background-color: white;
   border-radius: 40px;
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
   display: flex;
@@ -87,7 +91,7 @@ body {
   justify-self: center;
 }
 .text {
-  color: white;
+  color: black;
   position: absolute;
   transition: opacity 300ms;
   user-select: none;
@@ -123,11 +127,11 @@ body {
   opacity: 0;
 }
 .active.submit-container {
-  animation: 6s Container;
+  animation: 4s Container;
 }
 .active .text {
   opacity: 0;
-  animation: 6s Text forwards;
+  animation: 4s Text forwards;
 }
 .active .fingerprint {
   opacity: 1;
@@ -155,15 +159,11 @@ body {
 }
 .active .ok {
   opacity: 1;
-  animation: 6s Ok forwards;
+  animation: 4s Ok forwards;
 }
 @keyframes Container {
   0% { width: 200px }
   6% { width: 80px }
-  71% { transform: scale(1); }
-  75% { transform: scale(1.2); }
-  77% { transform: scale(1); }
-
   94% { width: 80px }
   100% { width: 200px }
 }
@@ -173,13 +173,4 @@ body {
 
   94% { opacity: 0; transform: scale(0.5); }
   100% { opacity: 1; transform: scale(1); }
-}
-@keyframes Ok {
-  0% { opacity: 0 }
-  70% { opacity: 0; transform: scale(0); }
-  75% { opacity: 1; transform: scale(1.1); }
-  77% { opacity: 1; transform: scale(1); }
-  92% { opacity: 1; transform: scale(1); }
-  96% { opacity: 0; transform: scale(0.5); }
-  100% { opacity: 0 }
 }
