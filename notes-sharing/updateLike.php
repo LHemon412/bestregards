@@ -3,10 +3,7 @@
 // Error code explanation
 // 0: Insufficient post data
 
-define("SERVERNAME", "localhost");
-define("USERNAME", "root");
-define("PASSWORD", "");
-define("DATABASE", "bestregards");
+include_once("databaseSettings.php");
 session_start();
 if (!isset($_SESSION["username"])) {
   header("Location: ../error.html");

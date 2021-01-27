@@ -6,10 +6,7 @@
 // 2: File size too large (Currently 5MB - 5,000,000B)
 // 3: File IO Error
 
-define("SERVERNAME", "localhost");
-define("USERNAME", "root");
-define("PASSWORD", "");
-define("DATABASE", "bestregards");
+include_once("databaseSettings.php");
 session_start();
 if (!isset($_SESSION["username"])) {
   header("Location: ../error.html");

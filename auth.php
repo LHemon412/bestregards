@@ -1,12 +1,5 @@
 <?php
-define("SERVERNAME", "localhost");
-define("USERNAME", "root");
-define("PASSWORD", "");
-define("DATABASE", "bestregards");
-/*$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "bestregards";*/
+include_once("databaseSettings.php");
 
 function isLoggedIn() {
   return isSessionLoggedIn() or isCookieLoggedIn();

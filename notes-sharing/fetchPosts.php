@@ -4,13 +4,9 @@
 */
 header("Content-type: application/json");
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "bestregards";
+include_once("databaseSettings.php");
 
-
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = new mysqli(SERVERNAME, USERNAME, PASSWORD, DATABASE);
 
 if ($conn->connect_error) {
   die("Database error: " . $conn->connect_error);
