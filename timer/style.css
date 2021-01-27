@@ -1,0 +1,182 @@
+@font-face {
+  font-family: "System";
+  src: url("../assets/chinese_handwrite.ttf");
+}
+
+@font-face {
+  font-family: "Quote";
+  src: local("Playlist Script"), url("../assets/Playlist_Script.otf");
+  unicode-range: U+00-024F;
+}
+
+@font-face {
+  font-family: "Quote";
+  src: url("../assets/chinese_handwrite.ttf");
+  unicode-range: U+4E00-9FFF;
+}
+
+* {
+  font-family: System, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-image: url("../assets/background.jpg");
+  background-size: 100vw 100vh;
+}
+
+
+
+/* Heading */
+.heading {
+  height: auto;
+  background-color: #f6f6f6;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2vh 0;
+  padding-left: 4%;
+}
+
+.heading img {
+  height: 11vh;
+}
+
+
+
+/* Navigation Bar */
+.navigation_bar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 5%;
+  overflow: hidden;
+  height: 8vh;
+  background-color: #767676;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.navigation_bar li {
+  display: block;
+  height: 8vh;
+  width: 20%;
+}
+
+li.active a {
+  background-color: #767676;
+}
+
+/* @media all and (orientation: portrait) {
+  .navigation_bar a {
+    font-size: 3.5vw;
+  }
+}
+
+@media all and (orientation: landscape) {
+  .navigation_bar a {
+    font-size: 3.5vh;
+  }
+} */
+
+.navigation_bar a {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  background-color: #767676;
+  font-weight: bold;
+  padding: 0.5% 0;
+  font-size: 3.5vmin;
+}
+
+
+
+/* Timer */
+.timer-frame {
+  display: grid;
+  width: 90%;
+  height: 50%;
+  margin-left: 5%;
+  margin-top: 2%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1.7vmin;
+  box-shadow: 0px 5px 10px black;
+  grid-template-columns: 35% 35% 30%;
+  grid-template-areas:
+    "timer-toggle timer-toggle studyingwifu"
+    "timer-total-time timer-period-time studyingwifu";
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.timer-toggle {
+  height: 30vh;
+  grid-area: timer-toggle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 1.7vmin;
+  border-right: 1px solid rgba(0, 0, 0, 0.7);
+  font-size: 5vmin;
+  cursor: pointer;
+}
+
+.timer-toggle.started {
+  background-color: rgba(21, 211, 27, 0.7);
+}
+.timer-toggle.ended {
+  background-color: rgba(200, 200, 200, 0.7);
+}
+
+#timer-toggle-desc-start, #timer-toggle-desc-end {
+  display: none;
+}
+
+.ended #timer-toggle-desc-start {
+  display: inline;
+}
+.started #timer-toggle-desc-end {
+  display: inline;
+}
+
+.timer-total-time {
+  height: 20vh;
+  grid-area: timer-total-time;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.5vmin;
+  text-align: center;
+}
+
+.timer-period-time {
+  height: 20vh;
+  grid-area: timer-period-time;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid rgba(0, 0, 0, 0.7);
+  font-size: 3.5vmin;
+  text-align: center;
+}
+
+.studyingwifu {
+  height: 50vh;
+  grid-area: studyingwifu;
+}
+
+.timer-studyingwifu {
+  grid-area: studyingwifu;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5vmin;
+}

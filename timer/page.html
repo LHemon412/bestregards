@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh_hk" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title>溫習計時 - Best Regards.</title>
+    <script src="../jquery.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      $(".navigation_bar a").on({
+        mouseenter: function() {
+          $(this).css("background-color", "#363636");
+        },
+        mouseleave: function() {
+          $(this).css("background-color", "#767676");
+        }
+      });
+
+      $.post("../fetch/fetchUsername.php", function(data) {
+        $("#username").text(data.username);
+        $.post("../fetch/fetchTimerStatus.php", {username: data.username, mode: ["active", "totalTime"]}, function(data2) {
+          console.log("Return:", data2);
+          if (!data2.active) {
+            $(".timer-toggle").addClass("ended");
+          } else {
+            $(".timer-toggle").addClass("started");
+            $(".timer-toggle").attr("startTime", data2.startTime);
+            let time = Date.now() - data2.startTime * 1000;
+            $(".timer-period-time p").text(`本時段你已溫習 ${new Date(time).toISOString().substr(11, 8)}`);
+          }
+          $(".timer-total-time").attr("totalTime", data2.totalTime);
+          $(".timer-total-time p").text(`你總共已溫習了 ${new Date(1000*data2.totalTime).toISOString().substr(11, 8)}`);
+        })
+      })
+
+      setInterval(function() {
+        if ($(".timer-toggle").hasClass("started")) {
+          let time = Date.now() - parseInt($(".timer-toggle").attr("startTime")) * 1000;
+          $(".timer-period-time p").text(`本時段你已溫習 ${new Date(time).toISOString().substr(11, 8)}`);
+        }
+      }, 500);
+
+      $(".timer-toggle").click(function() {
+        $timer = $(this);
+        let mode = $(".timer-toggle").hasClass("started") ? "end" : "start";
+        $.post("../update/updateTimerStatus.php", {mode: mode}, function(data) {
+          if (data.success) {
+            if (mode == "end") {
+              $timer.addClass("ended", 500).removeClass("started", 500);
+              $(".timer-toggle").attr("endTime", Math.floor(Date.now()/1000));
+              let time = Date.now() - parseInt($(".timer-toggle").attr("startTime")) * 1000;
+              $(".timer-period-time p").text(`上個時段你共溫習了 ${new Date(time).toISOString().substr(11, 8)}`);
+              let totalTime = parseInt($(".timer-total-time").attr("totalTime"))*1000 + time;
+              $(".timer-total-time").attr("totalTime", Math.floor(totalTime/1000));
+              $(".timer-total-time p").text(`你總共已溫習了 ${new Date(totalTime).toISOString().substr(11, 8)}`);
+            } else {
+              $timer.addClass("started", 500).removeClass("ended", 500);
+              $(".timer-toggle").attr("startTime", Math.floor(Date.now()/1000));
+              $(".timer-period-time p").text(`本時段你已溫習 00:00:00`);
+            }
+          } else {
+            console.log("Error while starting/stopping timer.");
+          }
+        })
+      })
+    });
+
+    </script>
+  </head>
+  <body>
+    <p id="username" style="display: none;"></p>
+    <div class="heading">
+      <img src="../logo.png">
+    </div>
+    <div class="navigation_bar">
+      <ul>
+        <li><a href="../home">主頁</a></li>
+        <li><a href="../notes-sharing">筆記分享</a></li>
+        <li><a href="../timer">溫習計時</a></li>
+        <li></li>
+        <li><a href="../">商店網頁</a></li>
+      </ul>
+    </div>
+    <div class="timer-frame">
+      <div class="timer-toggle">
+        <p id="timer-toggle-desc-start">按我開始溫習</p>
+        <p id="timer-toggle-desc-end">按我停止溫習</p>
+      </div>
+      <div class="timer-total-time">
+        <p></p>
+      </div>
+      <div class="timer-period-time">
+        <p></p>
+      </div>
+      <div class="timer-studyingwifu">
+        <p>新功能即將推出...</p>
+      </div>
+    </div>
+  </body>
+</html>
